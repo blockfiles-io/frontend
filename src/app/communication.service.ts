@@ -51,7 +51,7 @@ export class CommunicationService {
       "shortIndex": 12
     },
     {
-      "name": "Shardium Sphinx",
+      "name": "Shardeum Sphinx",
       "key": "sphinx",
       "currency": "SHM",
       "feePerMB": 0.0002,
