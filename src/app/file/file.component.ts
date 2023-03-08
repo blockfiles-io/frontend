@@ -31,6 +31,9 @@ export class FileComponent implements OnInit {
 
   }
   async download() {
+    if (this.downloading) {
+      return;
+    }
     this.downloading = true;
     await this.com.initWeb3(this.file.blockchain);
     await this.com.enableMetamask();
@@ -43,7 +46,8 @@ export class FileComponent implements OnInit {
     const signature = await window.ethereum.request({ method: 'personal_sign', params: [message, account] });
     this.http.get<any>('/api/files/download/'+this.route.snapshot.params["id"]+'?sign='+signature+'&t='+t+"&blockchain=" + this.com.resolveShortIndex(this.route.snapshot.params["shortIndex"])).subscribe(async res => {
       if (res.url) {
-
+        this.downloading = false;
+        window.location.href = res.url;
       }
       else {
         if (res.canBuy) {

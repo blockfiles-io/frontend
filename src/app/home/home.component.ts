@@ -13,7 +13,6 @@ declare var window: any;
 })
 export class HomeComponent implements OnInit {
   public addresses = 0;
-  private net = "arbGoerli";
   public ethAddresses = 0;
   public polygonAddresses = 0;
   public sentNotifications = 0;
@@ -150,6 +149,7 @@ export class HomeComponent implements OnInit {
     await this.com.initWeb3(this.file.network);
     await this.com.enableMetamask();
     await this.com.switchNetwork(this.file.network);
+    this.web3 = this.com.web3;
     console.log("final amount: ", this.etherPrice);
     let ethA = Web3.utils.toWei('' + this.etherPrice, "ether");
     var weiAmount = Web3.utils.numberToHex(ethA);
@@ -182,7 +182,7 @@ export class HomeComponent implements OnInit {
       "stateMutability": "payable",
       "type": "function"
     }]
-      , this.com.tokenContractAddresses[this.net]);
+      , this.com.tokenContractAddresses[this.file.network]);
 
     this.file.expectedPayment = +this.etherPrice;
 
@@ -196,7 +196,7 @@ export class HomeComponent implements OnInit {
       .mint(this.fileStats.sizeInMb, window.ethereum.selectedAddress, this.file.maxHolders, Web3.utils.toWei('' + this.file.royaltyFee, "ether"))
       .encodeABI();
 
-    let extraGas = await this.getExtraGas(this.net, data);
+    let extraGas = await this.getExtraGas(this.file.network, data);
     let finalGas = gasEstimate + extraGas;
     console.log("gas estimates: ", gasEstimate, extraGas, finalGas);
     const transactionParameters = {
@@ -204,7 +204,7 @@ export class HomeComponent implements OnInit {
       gas: Web3.utils.toHex(gasEstimate),
       maxPriorityFeePerGas: null,
       maxFeePerGas: null,
-      to: this.com.tokenContractAddresses[this.net], // Required except during contract publications.
+      to: this.com.tokenContractAddresses[this.file.network], // Required except during contract publications.
       from: window.ethereum.selectedAddress, // must match user's active address.
       data: data,
     };
@@ -217,12 +217,14 @@ export class HomeComponent implements OnInit {
       });
       this.file.transactionTx = txHash;
       this.http.post<any>('/api/uploads/process', this.file).subscribe(r => {
-        this.router.navigateByUrl('/uploads/' + this.file.key);
+        this.router.navigateByUrl('/uploads/' + this.com.getNetwork(this.file.network)?.shortIndex + "/" + this.file.key);
         this.mintLoading = true;
+        this.cd.detectChanges();
       });
     } catch (error: any) {
       this.mintLoading = false;
       alert("😥 Something went wrong: " + error.message);
+      this.cd.detectChanges();
     }
   }
 

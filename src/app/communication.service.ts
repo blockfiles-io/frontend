@@ -24,7 +24,7 @@ export class CommunicationService {
   private web3Providers: any = { 
     "arbGoerli": "https://goerli-rollup.arbitrum.io/rpc",
     "optGoerli": "https://goerli.optimism.io",
-    "goerli": "https://goerli.infura.io/v3/",
+    "goerli": "https://eth-goerli.public.blastapi.io",
     "sphinx": "https://sphinx.shardeum.org/",
    };
   
@@ -115,7 +115,7 @@ export class CommunicationService {
   }
   public async switchNetwork(key: string) {
     let network: any;
-    if (key == "ethGoerli") {
+    if (key == "goerli") {
       network = {
         chainId: '0x5',
         chainName: 'Ethereum Goerli',
@@ -139,6 +139,32 @@ export class CommunicationService {
         },
         blockExplorerUrls: ['https://goerli.arbiscan.io'],
         rpcUrls: ['https://goerli-rollup.arbitrum.io/rpc'],
+      };
+    }
+    else if (key == "optGoerli") {
+      network = {
+        chainId: '0x1A4',
+        chainName: 'Optimism Goerli',
+        nativeCurrency: {
+          symbol: 'ETH',
+          decimals: 18,
+          name: 'ETH'
+        },
+        blockExplorerUrls: ['https://goerli-optimism.etherscan.io'],
+        rpcUrls: ['https://goerli.optimism.io'],
+      };
+    }
+    else if (key == "sphinx") {
+      network = {
+        chainId: '0x1F92',
+        chainName: 'Shardeum Sphinx 1.X',
+        nativeCurrency: {
+          symbol: 'SHM',
+          decimals: 18,
+          name: 'SHM'
+        },
+        blockExplorerUrls: ['https://explorer-sphinx.shardeum.org/'],
+        rpcUrls: ['https://sphinx.shardeum.org/'],
       };
     }
     else {
