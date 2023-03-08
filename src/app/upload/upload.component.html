@@ -1,1 +1,23 @@
-<p>upload works!</p>
+<div class="container-lg">
+    <div *ngIf="loading">loading</div>
+    <ng-container *ngIf="loading==false && file">
+        <h1>File: {{file.name}}</h1>
+        <strong>Status: </strong> {{getStatus()}}<br />
+        <strong>Blockchain: </strong> {{getBlockchain()}}<br />
+        <strong>File Size: </strong> {{file.size | filesize}}<br />
+        <ngb-alert [type]="'info'" *ngIf="file.status==0" [dismissible]="false">
+            We are waiting for the blockchain to confirm the transaction. Check transaction here:
+            <a [href]="getBlockchainLink()" target="_blank">{{getBlockchainLink()}}</a>
+        </ngb-alert>
+        <ngb-alert [type]="'info'" *ngIf="file.status==1" [dismissible]="false">
+            We are now processing the file to its final destintation, this should take less than a minute.
+        </ngb-alert>
+        <ngb-alert [type]="'success'" *ngIf="file.status==2" [dismissible]="false">
+            File is live!
+        </ngb-alert>
+        <ng-container *ngIf="file.status==2">
+            <strong>Url to Share</strong><br />
+            <input type="text" [value]="getUrl()" [contentEditable]="false" [disabled]="true" style="width:100%;" />
+        </ng-container>
+    </ng-container>
+    </div>

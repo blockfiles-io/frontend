@@ -1,5 +1,5 @@
 <div class="position-relative overflow-hidden p-3 p-md-5 m-md-3 text-center bg-light">
-    <div class="col-md-5 p-lg-5 mx-auto my-5">
+    <div class="col-md-9 mx-auto">
         <h1 class="display-4 fw-normal">Share, sell, contribute through the blockchains</h1>
         <p class="lead fw-normal">Upload a file, share it in the blockchain. Get paid for people downloading.
         </p>
@@ -11,10 +11,11 @@
         <div class="row">
             <div class="col-12 col-sm-4">
                 <ng-container *ngIf="fileUploading">loading ...</ng-container>
-                <input *ngIf="fileUploading==false" type="file" (change)="handleUploadChange($event)" accept="*/*" />
+                <ng-container *ngIf="fileUploaded && file">{{file.name}}</ng-container>
+                <input *ngIf="fileUploading==false && fileUploaded==false" type="file" (change)="handleUploadChange($event)" accept="*/*" />
             </div>
             <div class="col-12 col-sm-2">
-                <select (change)="updatePrice()" [disabled]="file.loading" class="form-select"
+                <select (change)="updatePrice()" [disabled]="fileUploading || file.loading" class="form-select"
                     [(ngModel)]="file.network" placeholder="Select a blockchain">
                     <option value="">Select a blockchain</option>
                     <option *ngFor="let n of availableNetworks" [value]="n.key">{{n.name}}</option>
@@ -23,11 +24,11 @@
             <div class="col-12 col-sm-2">
                 <div class="row">
                     <div class="col-12 col-sm-6" *ngIf="availableCurrencies[file.network]">
-                        <input (keyup)="updatePrice()" (change)="updatePrice()" type="number"
+                        <input (keyup)="updatePrice()" [disabled]="fileUploading" (change)="updatePrice()" type="number"
                             [(ngModel)]="file.royaltyFee" placeholder="Fee per download" />
                     </div>
                     <div class="col-12 col-sm-6" *ngIf="availableCurrencies[file.network]">
-                        <select (change)="updatePrice()" [disabled]="file.loading" class="form-select"
+                        <select (change)="updatePrice()" [disabled]="fileUploading || file.loading" class="form-select"
                             [(ngModel)]="file.feeCurrency" placeholder="Select a currency">
                             <option *ngFor="let n of availableCurrencies[file.network]" [value]="n">{{n}}</option>
                         </select>
@@ -39,27 +40,17 @@
                 <ngb-alert *ngIf="priceInfo" [type]="'info'" [dismissible]="false">
                     {{priceMessage}}
                 </ngb-alert>
-                File size: {{fileStats?.size|filesize}}<br />
+
+                <span *ngIf="file">Name: {{file.name}}<br /></span>
+                <span *ngIf="fileStats">File size: {{fileStats.size|filesize}}<br /></span>
                 Price: {{price}}
             </div>
         </div>
-
 
         <button class="btn btn-large btn-primary" [disabled]="mintLoading || mintReady==false" (click)="mintFile()">
             <ng-container *ngIf="mintLoading">loading...</ng-container>
             <ng-container *ngIf="!mintLoading">Share file decentrally!</ng-container>
         </button>
 
-    </div>
-</div>
-<div class="container">
-    <div class="row">
-        <div class="col-12">
-            <h1>Fun Facts</h1>
-            Monitored Addresses: {{addresses}}<br />
-            Ethereum: {{ethAddresses}}<br />
-            Polygon: {{polygonAddresses}}<br />
-            Sent Notifications: {{sentNotifications}}
-        </div>
     </div>
 </div>

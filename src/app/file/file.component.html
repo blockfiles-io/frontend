@@ -1,3 +1,19 @@
 <div class="container-lg">
-    <h1>File</h1>
-    </div>
+    <div *ngIf="loading">loading</div>
+    <ng-container *ngIf="loading==false && file">
+        <h1>File: {{file.name}}</h1>
+        <strong>Blockchain: </strong> {{getBlockchain()}}<br />
+        <strong>File Size: </strong> {{file.size | filesize}}<br />
+        <strong>Price: </strong> {{getPrice()}}
+        <br />
+        <br />
+        <ngb-alert [type]="'danger'" [dismissible]="false" *ngIf="error=='noMoreDownloads'">
+            Unfortunately this file can no longer be purchased.
+        </ngb-alert>
+        <button class="btn btn-primary" (click)="download()">
+            <ng-container *ngIf="downloading">loading ...</ng-container>
+            <ng-container *ngIf="!downloading && free">Free Download</ng-container>
+            <ng-container *ngIf="!downloading && !free">Pay {{getPrice()}} to Download</ng-container>
+        </button>
+    </ng-container>
+</div>
