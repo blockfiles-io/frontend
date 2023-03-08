@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { CommunicationService } from '../communication.service';
 
 @Component({
   selector: 'app-upload',
@@ -14,6 +15,7 @@ export class UploadComponent {
   constructor(
     private http: HttpClient, 
     private cd: ChangeDetectorRef, 
+    private com: CommunicationService,
     private route: ActivatedRoute
     ) {
 
@@ -25,7 +27,7 @@ export class UploadComponent {
     if (this.file.status != 2) {
       return "";
     }
-    return "https://blockfiles.io/file/" + this.file.tokenId + "/" + encodeURIComponent(this.file.name);
+    return "https://blockfiles.io/file/" + this.com.getNetwork(this.file.blockchain)!.shortIndex + "/" + this.file.tokenId + "/" + encodeURIComponent(this.file.name);
   }
   getStatus() {
     if (!this.file) {
@@ -48,19 +50,13 @@ export class UploadComponent {
     if (!this.file) {
       return "";
     }
-    if (this.file.blockchain == "arbGoerli") {
-      return "Arbitrum (Goerli)";
-    }
-    return "";
+    return this.com.getNetwork(this.file.blockchain)!.name;
   }
   getBlockchainLink() {
     if (!this.file) {
       return "";
     }
-    if (this.file.blockchain == "arbGoerli") {
-      return "https://goerli.arbiscan.io/tx/" + this.file.transactionTx;
-    }
-    return "";
+    return this.com.getBlockchainLink(this.file.transactionTx, this.file.blockchain);
   }
 
   ngOnInit() {

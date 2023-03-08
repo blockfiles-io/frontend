@@ -9,19 +9,78 @@ declare var window: any;
 export class CommunicationService {
 
   public web3: Web3 | null = null;
-  public tokenContractAddresses: any = { "arbGoerli": "0x91CCb03f4c965831399F1915c178cb5853FfAD6e" };
-  public accessContractAddresses:any = { "arbGoerli": "0xF29284Ac9F9a0f381E08D8907B8CA90683E421ed"};
-  private web3Providers: any = { "arbGoerli": "https://goerli-rollup.arbitrum.io/rpc" };
+  public tokenContractAddresses: any = { 
+    "arbGoerli": "0x91CCb03f4c965831399F1915c178cb5853FfAD6e",
+    "optGoerli": "0x5e41CcC3599785AA5F66dfc3da6cD1f9C8e64D63",
+    "goerli": "0xFD6FaF04156D9392EB1D05f092c2D00A9FA5E63F",
+    "sphinx": "0x7d57b63596d347fcc0801b1ce3fc5c1e8d82324d",
+   };
+  public accessContractAddresses:any = { 
+    "arbGoerli": "0xF29284Ac9F9a0f381E08D8907B8CA90683E421ed",
+    "optGoerli": "0x2bE78D8befea0D091b144C60CCcBb224D435A4c2",
+    "goerli": "0x37fe0aC287B8c061cf1cb3a886E1BF17b89a658A",
+    "sphinx": "0x5e41ccc3599785aa5f66dfc3da6cd1f9c8e64d63"
+  };
+  private web3Providers: any = { 
+    "arbGoerli": "https://goerli-rollup.arbitrum.io/rpc",
+    "optGoerli": "https://goerli.optimism.io",
+    "goerli": "https://goerli.infura.io/v3/",
+    "sphinx": "https://sphinx.shardeum.org/",
+   };
   
   public availableNetworks = [
     {
       "name": "Arbitrum Goerli",
       "key": "arbGoerli",
       "currency": "ETH",
-      "feePerMB": 0.0002
+      "feePerMB": 0.0002,
+      "shortIndex": 10
+    },
+    {
+      "name": "Optimism Goerli",
+      "key": "optGoerli",
+      "currency": "ETH",
+      "feePerMB": 0.0002,
+      "shortIndex": 11
+    },
+    {
+      "name": "Ethereum Goerli",
+      "key": "goerli",
+      "currency": "ETH",
+      "feePerMB": 0.0002,
+      "shortIndex": 12
+    },
+    {
+      "name": "Shardium Sphinx",
+      "key": "sphinx",
+      "currency": "SHM",
+      "feePerMB": 0.0002,
+      "shortIndex": 13
     }
   ];
-
+  public resolveShortIndex(i:any) {
+    for (let d of this.availableNetworks) {
+      if (d.shortIndex == i) {
+        return d.key;
+      }
+    }
+    return "";
+  }
+  getBlockchainLink(hash:string, blockchain:string) {
+    if (blockchain == "arbGoerli") {
+      return "https://goerli.arbiscan.io/tx/" + hash;
+    }
+    else if (blockchain == "optGoerli") {
+      return "https://goerli-optimism.etherscan.io/tx/" + hash;
+    }
+    else if (blockchain == "goerli") {
+      return "https://goerli.etherscan.io/tx/" + hash;
+    }
+    else if (blockchain == "sphinx") {
+      return "https://explorer-sphinx.shardeum.org/tx/" + hash;
+    }
+    return "";
+  }
   constructor() { }
 
   public async initWeb3(net:string) {

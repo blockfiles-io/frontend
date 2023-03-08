@@ -41,7 +41,7 @@ export class FileComponent implements OnInit {
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
     const account = accounts[0];
     const signature = await window.ethereum.request({ method: 'personal_sign', params: [message, account] });
-    this.http.get<any>('/api/files/download/3?sign='+signature+'&t='+t).subscribe(async res => {
+    this.http.get<any>('/api/files/download/'+this.route.snapshot.params["id"]+'?sign='+signature+'&t='+t+"&blockchain=" + this.com.resolveShortIndex(this.route.snapshot.params["shortIndex"])).subscribe(async res => {
       if (res.url) {
 
       }
@@ -126,7 +126,7 @@ export class FileComponent implements OnInit {
   checkingTransaction = false;
   async checkDownload() {
     this.checkingTransaction = true;
-    this.http.get<any>('/api/files/checkPurchase/'+this.transactionTx+"/"+this.file.tokenId).subscribe(async r => {
+    this.http.get<any>('/api/files/checkPurchase/'+this.transactionTx+"/"+this.file.tokenId+"?blockchain=" + this.com.resolveShortIndex(this.route.snapshot.params["shortIndex"])).subscribe(async r => {
       console.log("r: ", r);
       if (r.success == false) {
         let self = this;
@@ -165,21 +165,14 @@ export class FileComponent implements OnInit {
     if (!this.file) {
       return "";
     }
-    if (this.file.blockchain == "arbGoerli") {
-      return "Arbitrum (Goerli)";
-    }
-    return "";
+    return this.com.getNetwork(this.file.blockchain)!.name;
   }
   getBlockchainLink() {
     if (!this.file) {
       return "";
     }
-    if (this.file.blockchain == "arbGoerli") {
-      return "https://goerli.arbiscan.io/tx/" + this.file.transactionTx;
-    }
-    return "";
+    return this.com.getBlockchainLink(this.file.transactionTx, this.file.blockchain);
   }
-
   ngOnInit() {
     this.load();
   }
@@ -187,7 +180,7 @@ export class FileComponent implements OnInit {
   load() {
     this.loading = true;
     this.cd.detectChanges();
-    this.http.get<any>('/api/files/' + this.route.snapshot.params["id"]).subscribe(r => {
+    this.http.get<any>('/api/files/' + this.route.snapshot.params["id"]+"?blockchain=" + this.com.resolveShortIndex(this.route.snapshot.params["shortIndex"])).subscribe(r => {
       this.file = r;
       this.loading = false;
       console.log("file: ", this.file);

@@ -60,7 +60,11 @@ export class HomeComponent implements OnInit {
   availableNetworks:any[] = [];
   web3:Web3|null = null;
   availableCurrencies: any = {
-    "arbGoerli": ["ETH"]
+    "arbGoerli": ["ETH"],
+    "optGoerli": ["ETH"],
+    "goerli": ["ETH"],
+    "sphinx": ["SHM"],
+    
   }
   fileStats: any;
   etherPrice = "";

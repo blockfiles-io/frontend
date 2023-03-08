@@ -8,8 +8,8 @@ import { UploadComponent } from './upload/upload.component';
 const routes: Routes = [
   { path: '', component: HomeComponent },
   { path: 'about', component: AboutComponent },
-  { path: 'file/:id/:slug', component: FileComponent},
-  { path: 'uploads/:code', component: UploadComponent}
+  { path: 'file/:shortIndex/:id/:slug', component: FileComponent},
+  { path: 'uploads/:shortIndex/:code', component: UploadComponent}
   
 ];
 
