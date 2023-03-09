@@ -15,6 +15,7 @@ export class CommunicationService {
     "goerli": "0xFD6FaF04156D9392EB1D05f092c2D00A9FA5E63F",
     "sphinx": "0x7d57b63596d347fcc0801b1ce3fc5c1e8d82324d",
     "mumbai": "0x5e41CcC3599785AA5F66dfc3da6cD1f9C8e64D63",
+    "baseGoerli": "0x5e41CcC3599785AA5F66dfc3da6cD1f9C8e64D63",
     "polygon": "0x5e41CcC3599785AA5F66dfc3da6cD1f9C8e64D63",
     "arbitrum": "0x5e41CcC3599785AA5F66dfc3da6cD1f9C8e64D63",
     "optimism": "0x5e41CcC3599785AA5F66dfc3da6cD1f9C8e64D63",
@@ -26,6 +27,7 @@ export class CommunicationService {
     "goerli": "0x37fe0aC287B8c061cf1cb3a886E1BF17b89a658A",
     "sphinx": "0x5e41ccc3599785aa5f66dfc3da6cd1f9c8e64d63",
     "mumbai": "0x2bE78D8befea0D091b144C60CCcBb224D435A4c2",
+    "baseGoerli": "0x2bE78D8befea0D091b144C60CCcBb224D435A4c2",
     "polygon": "0x37fe0aC287B8c061cf1cb3a886E1BF17b89a658A",
     "arbitrum": "0x2bE78D8befea0D091b144C60CCcBb224D435A4c2",
     "optimism": "0x2bE78D8befea0D091b144C60CCcBb224D435A4c2",
@@ -37,6 +39,7 @@ export class CommunicationService {
     "goerli": "https://eth-goerli.public.blastapi.io",
     "sphinx": "https://sphinx.shardeum.org/",
     "mumbai": "https://rpc-mumbai.maticvigil.com",
+    "baseGoerli": "https://goerli.base.org",
     "polygon": "https://polygon-rpc.com/",
     "arbitrum": "https://arb1.arbitrum.io/rpc",
     "optimism": "https://mainnet.optimism.io",
@@ -98,6 +101,12 @@ export class CommunicationService {
       "chainId": 80001,
       "enabled": true,
       "testnet": true
+    },
+    {
+      "name": "Base Goerli",
+      "key": "baseGoerli",
+      "currency": "ETH",
+
     },
     {
       "name": "Ethereum",
@@ -166,6 +175,9 @@ export class CommunicationService {
     }
     else if (blockchain == "mumbai") {
       return "https://mumbai.polygonscan.com/tx/" + hash;
+    }
+    else if (blockchain == "baseGoerli") {
+      return "https://goerli.basescan.org/tx/" + hash;
     }
     else if (blockchain == "polygon") {
       return "https://polygonscan.com/tx/" + hash;
@@ -278,6 +290,19 @@ export class CommunicationService {
         },
         blockExplorerUrls: ['https://mumbai.polygonscan.com/'],
         rpcUrls: ['https://rpc-mumbai.maticvigil.com'],
+      };
+    }
+    else if (key == "baseGoerli") {
+      network = {
+        chainId: '0x14A33',
+        chainName: 'Base Goerli',
+        nativeCurrency: {
+          symbol: 'ETH',
+          decimals: 18,
+          name: 'ETH'
+        },
+        blockExplorerUrls: ['https://goerli.basescan.org'],
+        rpcUrls: ['https://goerli.base.org'],
       };
     }
     else if (key == "polygon") {
