@@ -15,11 +15,12 @@ export class FileComponent implements OnInit {
   public file: any;
   public loading = true;
   public free = false;
+  public password = "";
   public downloading = false;
   public buying = false;
   public error = "";
-  private web3:Web3|null = null;
-  private contract:any;
+  private web3: Web3 | null = null;
+  private contract: any;
   public transactionTx = "";
 
   constructor(
@@ -30,23 +31,11 @@ export class FileComponent implements OnInit {
   ) {
 
   }
-  async download() {
-    if (this.downloading) {
-      return;
-    }
-    this.downloading = true;
-    await this.com.initWeb3(this.file.blockchain);
-    await this.com.enableMetamask();
-    await this.com.switchNetwork(this.file.blockchain);
-    this.web3 = this.com.web3;
-    let t = new Date().getTime();
-    let message = "Hi from blockfiles.io!\n\nYou sign this message so we can authenticate your address.\n\n\nTime:" + (t);
-    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
-    const account = accounts[0];
-    const signature = await window.ethereum.request({ method: 'personal_sign', params: [message, account] });
-    this.http.get<any>('/api/files/download/'+this.route.snapshot.params["id"]+'?sign='+signature+'&t='+t+"&blockchain=" + this.com.resolveShortIndex(this.route.snapshot.params["shortIndex"])).subscribe(async res => {
+  private async processResponse(res:any) {
+    this.error = "";
       if (res.url) {
         this.downloading = false;
+        this.cd.detectChanges();
         window.location.href = res.url;
       }
       else {
@@ -61,13 +50,57 @@ export class FileComponent implements OnInit {
         else {
           this.downloading = false;
           this.error = 'noMoreDownloads';
+          this.cd.detectChanges();
         }
       }
-    });
+    
+  }
+  async download() {
+    if (this.downloading) {
+      return;
+    }
+    this.downloading = true;
+    if (this.file.royaltyFee == 0 && this.file.web3only == 0) {
+      if (this.file.hasPassword) {
+        this.http.post<any>('/api/files/download/' + this.route.snapshot.params["id"] + "?blockchain=" + this.com.resolveShortIndex(this.route.snapshot.params["shortIndex"]), {"password": this.password}).subscribe(async res => { this.processResponse(res)}, error => {
+          this.error = 'password';
+          this.downloading = false;
+          this.cd.detectChanges();
+        });
+      
+      }
+      else {
+        this.http.get<any>('/api/files/download/' + this.route.snapshot.params["id"] + "?blockchain=" + this.com.resolveShortIndex(this.route.snapshot.params["shortIndex"])).subscribe(async res => { this.processResponse(res)});
+      }
+    }
+    else {
+      try {
+        await this.com.initWeb3(this.file.blockchain);
+        await this.com.enableMetamask();
+        await this.com.switchNetwork(this.file.blockchain);
+        this.web3 = this.com.web3;
+        let t = new Date().getTime();
+        let message = "Hi from blockfiles.io!\n\nYou sign this message so we can authenticate your address.\n\n\nTime:" + (t);
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+        const account = accounts[0];
+        const signature = await window.ethereum.request({ method: 'personal_sign', params: [message, account] });
+        
+        this.http.get<any>('/api/files/download/' + this.route.snapshot.params["id"] + '?sign=' + signature + '&t=' + t + "&blockchain=" + this.com.resolveShortIndex(this.route.snapshot.params["shortIndex"])).subscribe(async res => { this.processResponse(res)});
+      }
+      catch (error) {
+        console.log("error: ", error);
+        this.downloading = true;
+        this.cd.detectChanges();
+      }
+    }
+
+
 
   }
   async buy() {
-    
+
+
+
     let ethA = Web3.utils.toWei('' + this.file.royaltyFee, "ether");
     var weiAmount = Web3.utils.numberToHex(ethA);
     console.log('wei: ', weiAmount, ethA);
@@ -93,10 +126,10 @@ export class FileComponent implements OnInit {
 
     let funct = this.contract.methods.mintAccess(this.file.tokenId, window.ethereum.selectedAddress);
     let gasEstimate = await funct.estimateGas(
-        {
-          value: weiAmount
-        }
-      );
+      {
+        value: weiAmount
+      }
+    );
     let data = funct
       .encodeABI();
 
@@ -120,7 +153,7 @@ export class FileComponent implements OnInit {
         params: [transactionParameters]
       });
       this.transactionTx = txHash;
-      
+
       await this.checkDownload();
     } catch (error: any) {
       this.downloading = false;
@@ -130,13 +163,13 @@ export class FileComponent implements OnInit {
   checkingTransaction = false;
   async checkDownload() {
     this.checkingTransaction = true;
-    this.http.get<any>('/api/files/checkPurchase/'+this.transactionTx+"/"+this.file.tokenId+"?blockchain=" + this.com.resolveShortIndex(this.route.snapshot.params["shortIndex"])).subscribe(async r => {
+    this.http.get<any>('/api/files/checkPurchase/' + this.transactionTx + "/" + this.file.tokenId + "?blockchain=" + this.com.resolveShortIndex(this.route.snapshot.params["shortIndex"])).subscribe(async r => {
       console.log("r: ", r);
       if (r.success == false) {
         let self = this;
-        setTimeout(()=> {
+        setTimeout(() => {
           self.checkDownload();
-        },1000);
+        }, 1000);
       }
       else {
         await this.buy();
@@ -184,7 +217,7 @@ export class FileComponent implements OnInit {
   load() {
     this.loading = true;
     this.cd.detectChanges();
-    this.http.get<any>('/api/files/' + this.route.snapshot.params["id"]+"?blockchain=" + this.com.resolveShortIndex(this.route.snapshot.params["shortIndex"])).subscribe(r => {
+    this.http.get<any>('/api/files/' + this.route.snapshot.params["id"] + "?blockchain=" + this.com.resolveShortIndex(this.route.snapshot.params["shortIndex"])).subscribe(r => {
       this.file = r;
       this.loading = false;
       console.log("file: ", this.file);

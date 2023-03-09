@@ -10,7 +10,11 @@
         <ngb-alert [type]="'danger'" [dismissible]="false" *ngIf="error=='noMoreDownloads'">
             Unfortunately this file can no longer be purchased.
         </ngb-alert>
-        <button class="btn btn-primary" (click)="download()">
+        <ngb-alert [type]="'danger'" [dismissible]="false" *ngIf="error=='password'">
+           Invalid or wrong password.
+        </ngb-alert>
+        <input *ngIf="file.hasPassword" type="password" [(ngModel)]="password" placeholder="Enter the password" /><br /><br />
+        <button class="btn btn-primary" (click)="download()" [disabled]="!(file.hasPassword == false || password.length>0)">
             <ng-container *ngIf="downloading">loading ...</ng-container>
             <ng-container *ngIf="!downloading && free">Free Download</ng-container>
             <ng-container *ngIf="!downloading && !free">Pay {{getPrice()}} to Download</ng-container>

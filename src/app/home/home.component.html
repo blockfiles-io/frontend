@@ -46,7 +46,25 @@
                 Price: {{price}}
             </div>
         </div>
+        <div class="row" *ngIf="advanced==false">
+            <button (click)="openAdvanced()" class="btn btn-secondary btn-small">Advanced Settings</button>
+        </div>
 
+        <div class="row" *ngIf="advanced">
+            <div class="col-12 col-sm-2">
+                <input type="checkbox" [(ngModel)]="file.web3only" /> Web3 only?
+            </div>
+            <div class="col-12 col-sm-2">
+                <input [disabled]="file.royaltyFee>0" type="password" [(ngModel)]="file.password" placeholder="Password for download" />
+               
+            </div>
+            <div class="col-12 col-sm-4">
+                <input type="number" [(ngModel)]="file.maxHolders" placeholder="Max # of holders" />
+                <br />
+                (0 = unlimitted)
+               
+            </div>
+        </div>
         <button class="btn btn-large btn-primary" [disabled]="mintLoading || mintReady==false" (click)="mintFile()">
             <ng-container *ngIf="mintLoading">loading...</ng-container>
             <ng-container *ngIf="!mintLoading">Share file decentrally!</ng-container>

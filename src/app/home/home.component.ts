@@ -18,6 +18,7 @@ export class HomeComponent implements OnInit {
   public sentNotifications = 0;
   public messages: any[] = [];
   public mintReady = false;
+  public advanced = false;
   public entries = [
     {
       "address": "",
@@ -52,6 +53,8 @@ export class HomeComponent implements OnInit {
     "royaltyFee": 0,
     "maxHolders": 0,
     "transactionTx": "",
+    "web3only": false,
+    "password": "",
     "expectedPayment": 0,
     "name": "",
     "storage": "s3"
@@ -92,6 +95,10 @@ export class HomeComponent implements OnInit {
     }
     this.cd.detectChanges();
   }
+  openAdvanced() {
+    this.advanced = true;
+    this.cd.detectChanges();
+  }
 
   handleUploadChange(event: any) {
     if (event.target.files) {
@@ -102,7 +109,6 @@ export class HomeComponent implements OnInit {
       
       //    const fileLink = URL.createObjectURL(file);       
       this.http.get<any>('/api/uploads/signedUrl').subscribe(r => {
-        console.log("R: ", r);
         this.http.put<any>(r.url, file).subscribe(d => {
           this.http.post<any>("/api/uploads/check", {
             "key": r.key
