@@ -37,40 +37,77 @@ export class CommunicationService {
       "key": "arbGoerli",
       "currency": "ETH",
       "feePerMB": 0.0002,
-      "shortIndex": 10
+      "chainId": 421613,
+      "enabled": true
     },
     {
       "name": "Optimism Goerli",
       "key": "optGoerli",
       "currency": "ETH",
       "feePerMB": 0.0002,
-      "shortIndex": 11
+      "chainId": 420,
+      "enabled": true
     },
     {
       "name": "Ethereum Goerli",
       "key": "goerli",
       "currency": "ETH",
       "feePerMB": 0.0002,
-      "shortIndex": 12
+      "chainId": 5,
+      "enabled": true
     },
     {
       "name": "Shardeum Sphinx",
       "key": "sphinx",
       "currency": "SHM",
       "feePerMB": 0.0002,
-      "shortIndex": 13
+      "chainId": 8082,
+      "enabled": true
     },
     {
       "name": "Polygon Mumbai",
       "key": "mumbai",
       "currency": "MATIC",
       "feePerMB": 5,
-      "shortIndex": 14
-    }
+      "chainId": 80001,
+      "enabled": true
+    },
+    {
+      "name": "Ethereum",
+      "key": "eth",
+      "currency": "ETH",
+      "feePerMB": 0.0002,
+      "chainId": 1,
+      "enabled": false
+    },
+    {
+      "name": "Polygon",
+      "key": "matic",
+      "currency": "MATIC",
+      "feePerMB": 5,
+      "chainId": 137,
+      "enabled": false
+    },
+    {
+      "name": "Optimism",
+      "key": "optimism",
+      "currency": "ETH",
+      "feePerMB": 0.0002,
+      "chainId": 10,
+      "enabled": false
+    },
+    {
+      "name": "Arbitrum One",
+      "key": "arbitrumone",
+      "currency": "ETH",
+      "feePerMB": 0.0002,
+      "chainId": 42161,
+      "enabled": false
+    },
   ];
-  public resolveShortIndex(i:any) {
+  public resolveChainId(i:any) {
     for (let d of this.availableNetworks) {
-      if (d.shortIndex == i) {
+      if (d.chainId == i) {
         return d.key;
       }
     }

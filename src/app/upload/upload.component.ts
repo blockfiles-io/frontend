@@ -27,7 +27,7 @@ export class UploadComponent {
     if (this.file.status != 2) {
       return "";
     }
-    return "https://blockfiles.io/file/" + this.com.getNetwork(this.file.blockchain)!.shortIndex + "/" + this.file.tokenId + "/" + encodeURIComponent(this.file.name);
+    return "https://blockfiles.io/file/" + this.com.getNetwork(this.file.blockchain)!.chainId + "/" + this.file.tokenId + "/" + encodeURIComponent(this.file.slug);
   }
   getStatus() {
     if (!this.file) {
@@ -60,12 +60,14 @@ export class UploadComponent {
   }
 
   ngOnInit() {
-    this.load();
+    this.load(true);
   }
 
-  load() {
-    this.loading = true;
-    this.cd.detectChanges();
+  load(firstLoad = false) {
+    if (firstLoad) {
+      this.loading = true;
+      this.cd.detectChanges();
+    }
     this.http.get<any>('/api/uploads/' + this.route.snapshot.params["code"]).subscribe(r => {
       this.file = r;
       this.loading = false;

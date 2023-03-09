@@ -62,7 +62,7 @@ export class FileComponent implements OnInit {
     this.downloading = true;
     if (this.file.royaltyFee == 0 && this.file.web3only == 0) {
       if (this.file.hasPassword) {
-        this.http.post<any>('/api/files/download/' + this.route.snapshot.params["id"] + "?blockchain=" + this.com.resolveShortIndex(this.route.snapshot.params["shortIndex"]), {"password": this.password}).subscribe(async res => { this.processResponse(res)}, error => {
+        this.http.post<any>('/api/files/download/' + this.route.snapshot.params["id"] + "?blockchain=" + this.com.resolveChainId(this.route.snapshot.params["chainId"]), {"password": this.password}).subscribe(async res => { this.processResponse(res)}, error => {
           this.error = 'password';
           this.downloading = false;
           this.cd.detectChanges();
@@ -70,7 +70,7 @@ export class FileComponent implements OnInit {
       
       }
       else {
-        this.http.get<any>('/api/files/download/' + this.route.snapshot.params["id"] + "?blockchain=" + this.com.resolveShortIndex(this.route.snapshot.params["shortIndex"])).subscribe(async res => { this.processResponse(res)});
+        this.http.get<any>('/api/files/download/' + this.route.snapshot.params["id"] + "?blockchain=" + this.com.resolveChainId(this.route.snapshot.params["chainId"])).subscribe(async res => { this.processResponse(res)});
       }
     }
     else {
@@ -85,7 +85,7 @@ export class FileComponent implements OnInit {
         const account = accounts[0];
         const signature = await window.ethereum.request({ method: 'personal_sign', params: [message, account] });
         
-        this.http.get<any>('/api/files/download/' + this.route.snapshot.params["id"] + '?sign=' + signature + '&t=' + t + "&blockchain=" + this.com.resolveShortIndex(this.route.snapshot.params["shortIndex"])).subscribe(async res => { this.processResponse(res)});
+        this.http.get<any>('/api/files/download/' + this.route.snapshot.params["id"] + '?sign=' + signature + '&t=' + t + "&blockchain=" + this.com.resolveChainId(this.route.snapshot.params["chainId"])).subscribe(async res => { this.processResponse(res)});
       }
       catch (error) {
         console.log("error: ", error);
@@ -163,7 +163,7 @@ export class FileComponent implements OnInit {
   checkingTransaction = false;
   async checkDownload() {
     this.checkingTransaction = true;
-    this.http.get<any>('/api/files/checkPurchase/' + this.transactionTx + "/" + this.file.tokenId + "?blockchain=" + this.com.resolveShortIndex(this.route.snapshot.params["shortIndex"])).subscribe(async r => {
+    this.http.get<any>('/api/files/checkPurchase/' + this.transactionTx + "/" + this.file.tokenId + "?blockchain=" + this.com.resolveChainId(this.route.snapshot.params["chainId"])).subscribe(async r => {
       console.log("r: ", r);
       if (r.success == false) {
         let self = this;
@@ -217,7 +217,7 @@ export class FileComponent implements OnInit {
   load() {
     this.loading = true;
     this.cd.detectChanges();
-    this.http.get<any>('/api/files/' + this.route.snapshot.params["id"] + "?blockchain=" + this.com.resolveShortIndex(this.route.snapshot.params["shortIndex"])).subscribe(r => {
+    this.http.get<any>('/api/files/' + this.route.snapshot.params["id"] + "?blockchain=" + this.com.resolveChainId(this.route.snapshot.params["chainId"])).subscribe(r => {
       this.file = r;
       this.loading = false;
       console.log("file: ", this.file);

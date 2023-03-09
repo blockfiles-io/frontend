@@ -223,7 +223,7 @@ export class HomeComponent implements OnInit {
       });
       this.file.transactionTx = txHash;
       this.http.post<any>('/api/uploads/process', this.file).subscribe(r => {
-        this.router.navigateByUrl('/uploads/' + this.com.getNetwork(this.file.network)?.shortIndex + "/" + this.file.key);
+        this.router.navigateByUrl('/uploads/' + this.com.getNetwork(this.file.network)?.chainId + "/" + this.file.key);
         this.mintLoading = true;
         this.cd.detectChanges();
       });
