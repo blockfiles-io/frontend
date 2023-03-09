@@ -20,17 +20,6 @@ export class HomeComponent implements OnInit {
   public mintReady = false;
   public advanced = false;
   public uploadPercentage = 0;
-  public entries = [
-    {
-      "address": "",
-      "email": "",
-      "loading": false,
-      "sent": false,
-      "message": "",
-      "network": "ethereum",
-      "error": false
-    }
-  ]
 
   constructor(
     private http: HttpClient,
@@ -72,6 +61,10 @@ export class HomeComponent implements OnInit {
     "optGoerli": ["ETH"],
     "goerli": ["ETH"],
     "sphinx": ["SHM"],
+    "polygon": ["MATIC"],
+    "ethereum": ["ETH"],
+    "arbitrum": ["ETH"],
+    "optimism": ["ETH"]
     
   }
   fileStats: any;

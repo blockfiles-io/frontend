@@ -105,7 +105,7 @@ export class CommunicationService {
     },
     {
       "name": "Polygon",
-      "key": "matic",
+      "key": "polygon",
       "currency": "MATIC",
       "feePerMB": 0.29,
       "freeFileFee": 7,
