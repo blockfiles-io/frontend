@@ -63,6 +63,7 @@ export class HomeComponent implements OnInit {
     "optGoerli": ["ETH"],
     "goerli": ["ETH"],
     "sphinx": ["SHM"],
+    "baseGoerli": ["ETH"],
     "polygon": ["MATIC"],
     "ethereum": ["ETH"],
     "arbitrum": ["ETH"],

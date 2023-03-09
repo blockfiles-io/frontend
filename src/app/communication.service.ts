@@ -142,7 +142,7 @@ export class CommunicationService {
     },
     {
       "name": "Arbitrum One",
-      "key": "arbitrumone",
+      "key": "arbitrum",
       "currency": "ETH",
       "feePerMB": 0.0002,
       "minPrice": 0.005,
