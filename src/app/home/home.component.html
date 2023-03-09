@@ -46,7 +46,7 @@
                 </ngb-alert>
 
                 <span *ngIf="file">Name: {{file.name}}<br /></span>
-                <span *ngIf="fileStats">File size: {{fileStats.size|filesize}}<br /></span>
+                <span *ngIf="nativeFile">File size: {{nativeFile.size|filesize}}<br /></span>
                 Price: {{price}}
             </div>
         </div>
@@ -69,8 +69,15 @@
                
             </div>
         </div>
+        <ngb-alert [type]="'info'" *ngIf="file.status==0 && mintLoading" [dismissible]="false">
+            We are waiting for the blockchain to confirm the transaction. Check transaction here:
+            <a [href]="getBlockchainLink()" target="_blank">{{getBlockchainLink()}}</a>
+        </ngb-alert>
         <button class="btn btn-large btn-primary" [disabled]="mintLoading || mintReady==false" (click)="mintFile()">
-            <ng-container *ngIf="mintLoading">loading...</ng-container>
+            <ng-container *ngIf="mintLoading">
+                <ng-container *ngIf="file.status==0">waiting for blockchain</ng-container>
+                <ng-container *ngIf="file.status==1">waiting for file</ng-container>
+            </ng-container>
             <ng-container *ngIf="!mintLoading">Share file decentrally!</ng-container>
         </button>
 

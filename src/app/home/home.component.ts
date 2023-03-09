@@ -52,10 +52,12 @@ export class HomeComponent implements OnInit {
     "password": "",
     "expectedPayment": 0,
     "name": "",
+    "size": 0,
+    "status": 0,
     "storage": "s3"
   };
-  availableNetworks:any[] = [];
-  web3:Web3|null = null;
+  availableNetworks: any[] = [];
+  web3: Web3 | null = null;
   availableCurrencies: any = {
     "arbGoerli": ["ETH"],
     "optGoerli": ["ETH"],
@@ -65,10 +67,10 @@ export class HomeComponent implements OnInit {
     "ethereum": ["ETH"],
     "arbitrum": ["ETH"],
     "optimism": ["ETH"]
-    
+
   }
-  fileStats: any;
   etherPrice = "";
+  sizeInMb = 0;
   updatePrice() {
     let n: any;
     for (let net of this.availableNetworks) {
@@ -77,7 +79,8 @@ export class HomeComponent implements OnInit {
         break;
       }
     }
-    let p = n.feePerMB * this.fileStats.sizeInMb;
+    this.sizeInMb = Math.round(this.nativeFile.size / 1000000);
+    let p = n.feePerMB * this.sizeInMb;
 
     if (this.file.royaltyFee == 0) {
       p = p + n.freeFileFee;
@@ -87,7 +90,11 @@ export class HomeComponent implements OnInit {
     else {
       this.priceInfo = false;
     }
+    console.log("P: ", p);
     this.etherPrice = p.toFixed(10);
+    if (this.etherPrice < n.minPrice) {
+      this.etherPrice = n.minPrice.toFixed(10);
+    }
     this.price = this.etherPrice + " " + n.currency;
     if (+this.etherPrice > 0) {
       this.mintReady = true;
@@ -99,58 +106,24 @@ export class HomeComponent implements OnInit {
     this.cd.detectChanges();
   }
 
+  public nativeFile: any;
+
   handleUploadChange(event: any) {
     if (event.target.files) {
-      this.fileUploading = true;
-      this.fileUploaded = false;
-      this.cd.detectChanges();
-      const file = event.target.files[0];
-      
+      this.nativeFile = event.target.files[0];
+      console.log("file: ", this.nativeFile.size);
+      this.updatePrice();
+
       //    const fileLink = URL.createObjectURL(file);       
-      this.http.get<any>('/api/uploads/signedUrl').subscribe(r => {
 
-        const req = new HttpRequest('PUT', r.url, file, {
-          reportProgress: true
-        });
-        this.http.request(req).subscribe(event => {
-          // Via this API, you get access to the raw event stream.
-          // Look for upload progress events.
-          if (event.type === HttpEventType.UploadProgress) {
-            // This is an upload progress event. Compute and show the % done:
-            let t = event.total;
-            if (t == undefined) {
-              t = 1;
-            }
-            this.uploadPercentage = Math.round(100 * event.loaded / t);
-            console.log(`File is ${this.uploadPercentage}% uploaded.`);
-            this.cd.detectChanges();
-          } else if (event instanceof HttpResponse) {
-            console.log('File is completely uploaded!');
-            this.http.post<any>("/api/uploads/check", {
-              "key": r.key
-            }).subscribe(d => {
-              this.file.key = r.key;
-              this.file.name = file.name;
-              this.fileStats = d;
-              this.fileUploading = false;
-              this.fileUploaded = true;
-              this.cd.detectChanges();
-              this.updatePrice();
-            })
-          }
-        });
-
-        
-      })
     }
-
   }
- 
-  
+
+
   mintLoading = false;
   contract: any;
   async test() {
-    
+
     let _gasPrice = await this.web3!.eth.getGasPrice();
     console.log("gasprice: ", _gasPrice);
 
@@ -212,13 +185,13 @@ export class HomeComponent implements OnInit {
     this.file.expectedPayment = +this.etherPrice;
 
     let gasEstimate = await this.contract.methods
-      .mint(this.fileStats.sizeInMb, window.ethereum.selectedAddress, this.file.maxHolders, Web3.utils.toWei('' + this.file.royaltyFee, "ether")).estimateGas(
+      .mint(this.sizeInMb, window.ethereum.selectedAddress, this.file.maxHolders, Web3.utils.toWei('' + this.file.royaltyFee, "ether")).estimateGas(
         {
           value: weiAmount
         }
       );
     let data = this.contract.methods
-      .mint(this.fileStats.sizeInMb, window.ethereum.selectedAddress, this.file.maxHolders, Web3.utils.toWei('' + this.file.royaltyFee, "ether"))
+      .mint(this.sizeInMb, window.ethereum.selectedAddress, this.file.maxHolders, Web3.utils.toWei('' + this.file.royaltyFee, "ether"))
       .encodeABI();
 
     let extraGas = await this.getExtraGas(this.file.network, data);
@@ -241,16 +214,70 @@ export class HomeComponent implements OnInit {
         params: [transactionParameters]
       });
       this.file.transactionTx = txHash;
+      this.file.name = this.nativeFile.name;
+      this.file.size = this.nativeFile.size;
+
       this.http.post<any>('/api/uploads/process', this.file).subscribe(r => {
-        this.router.navigateByUrl('/uploads/' + this.com.getNetwork(this.file.network)?.chainId + "/" + this.file.key);
-        this.mintLoading = true;
-        this.cd.detectChanges();
+        this.file.key = r.key;
+
+        this.uploadCheck();
+
+
+
       });
     } catch (error: any) {
       this.mintLoading = false;
       alert("😥 Something went wrong: " + error.message);
       this.cd.detectChanges();
     }
+  }
+  getBlockchainLink() {
+    if (!this.file) {
+      return "";
+    }
+    return this.com.getBlockchainLink(this.file.transactionTx, this.file.network);
+  }
+
+  uploadCheck() {
+    this.fileUploading = true;
+    this.fileUploaded = false;
+
+    this.http.get<any>("/api/uploads/validate/" + this.file.key).subscribe(d => {
+      if (d.blockchainConfirmed) {
+        this.file.status = 1;
+        this.cd.detectChanges();
+        const req = new HttpRequest('PUT', d.url, this.nativeFile, {
+          reportProgress: true
+        });
+        this.http.request(req).subscribe(event => {
+          if (event.type === HttpEventType.UploadProgress) {
+            let t = event.total;
+            if (t == undefined) {
+              t = 1;
+            }
+            this.uploadPercentage = Math.round(100 * event.loaded / t);
+            console.log(`File is ${this.uploadPercentage}% uploaded.`);
+            this.cd.detectChanges();
+          } else if (event instanceof HttpResponse) {
+            console.log('File is completely uploaded!');
+
+            this.fileUploading = false;
+            this.fileUploaded = true;
+            this.cd.detectChanges();
+            this.router.navigateByUrl('/uploads/' + this.com.getNetwork(this.file.network)?.chainId + "/" + this.file.key);
+            this.mintLoading = true;
+            this.cd.detectChanges();
+
+          }
+        });
+      }
+      else {
+        let self = this;
+        setTimeout(() => {
+          self.uploadCheck();
+        }, 1000);
+      }
+    })
   }
 
   ngOnInit() {
