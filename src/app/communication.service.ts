@@ -16,8 +16,8 @@ export class CommunicationService {
     "sphinx": "0x7d57b63596d347fcc0801b1ce3fc5c1e8d82324d",
     "mumbai": "0x5e41CcC3599785AA5F66dfc3da6cD1f9C8e64D63",
     "polygon": "0x5e41CcC3599785AA5F66dfc3da6cD1f9C8e64D63",
-    "arbitrum": "",
-    "optimism": "",
+    "arbitrum": "0x5e41CcC3599785AA5F66dfc3da6cD1f9C8e64D63",
+    "optimism": "0x5e41CcC3599785AA5F66dfc3da6cD1f9C8e64D63",
     "ethereum": ""
    };
   public accessContractAddresses:any = { 
@@ -27,8 +27,8 @@ export class CommunicationService {
     "sphinx": "0x5e41ccc3599785aa5f66dfc3da6cd1f9c8e64d63",
     "mumbai": "0x2bE78D8befea0D091b144C60CCcBb224D435A4c2",
     "polygon": "0x37fe0aC287B8c061cf1cb3a886E1BF17b89a658A",
-    "arbitrum": "",
-    "optimism": "",
+    "arbitrum": "0x2bE78D8befea0D091b144C60CCcBb224D435A4c2",
+    "optimism": "0x2bE78D8befea0D091b144C60CCcBb224D435A4c2",
     "ethereum": ""
   };
   private web3Providers: any = { 
@@ -107,7 +107,8 @@ export class CommunicationService {
       "minPrice": 0.005,
       "freeFileFee": 0.005,
       "chainId": 1,
-      "enabled": false
+      "enabled": false,
+      "testnet": false
     },
     {
       "name": "Polygon",
@@ -117,7 +118,8 @@ export class CommunicationService {
       "minPrice": 0.5,
       "freeFileFee": 2,
       "chainId": 137,
-      "enabled": true
+      "enabled": true,
+      "testnet": false
     },
     {
       "name": "Optimism",
@@ -126,7 +128,8 @@ export class CommunicationService {
       "feePerMB": 0.0002,
       "freeFileFee": 0.005,
       "chainId": 10,
-      "enabled": false
+      "enabled": true,
+      "testnet": false
     },
     {
       "name": "Arbitrum One",
@@ -136,7 +139,8 @@ export class CommunicationService {
       "minPrice": 0.005,
       "freeFileFee": 0.005,
       "chainId": 42161,
-      "enabled": false
+      "enabled": true,
+      "testnet": false
     },
   ];
   public resolveChainId(i:any) {

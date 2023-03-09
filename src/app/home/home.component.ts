@@ -216,6 +216,7 @@ export class HomeComponent implements OnInit {
       this.file.transactionTx = txHash;
       this.file.name = this.nativeFile.name;
       this.file.size = this.nativeFile.size;
+      this.cd.detectChanges();
 
       this.http.post<any>('/api/uploads/process', this.file).subscribe(r => {
         this.file.key = r.key;

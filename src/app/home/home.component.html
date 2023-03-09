@@ -69,7 +69,7 @@
                
             </div>
         </div>
-        <ngb-alert [type]="'info'" *ngIf="file.status==0 && mintLoading" [dismissible]="false">
+        <ngb-alert [type]="'info'" *ngIf="file.status==0 && file.transactionTx!='' && mintLoading" [dismissible]="false">
             We are waiting for the blockchain to confirm the transaction. Check transaction here:
             <a [href]="getBlockchainLink()" target="_blank">{{getBlockchainLink()}}</a>
         </ngb-alert>

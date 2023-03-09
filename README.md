@@ -5,6 +5,8 @@
 ### Mainnet
 
 Polygon: 0x5e41CcC3599785AA5F66dfc3da6cD1f9C8e64D63
+Arbitrum: 0x5e41CcC3599785AA5F66dfc3da6cD1f9C8e64D63
+Optimism: 0x5e41CcC3599785AA5F66dfc3da6cD1f9C8e64D63
 
 ### Testnet
 
@@ -19,6 +21,8 @@ Polygon Mumbai: 0x5e41CcC3599785AA5F66dfc3da6cD1f9C8e64D63
 ### Mainnet
 
 Polygon: 0x37fe0aC287B8c061cf1cb3a886E1BF17b89a658A
+Arbitrum: 0x2bE78D8befea0D091b144C60CCcBb224D435A4c2
+Optimism: 0x2bE78D8befea0D091b144C60CCcBb224D435A4c2
 
 ### Testnet
 
