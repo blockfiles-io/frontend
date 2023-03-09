@@ -14,18 +14,21 @@ export class CommunicationService {
     "optGoerli": "0x5e41CcC3599785AA5F66dfc3da6cD1f9C8e64D63",
     "goerli": "0xFD6FaF04156D9392EB1D05f092c2D00A9FA5E63F",
     "sphinx": "0x7d57b63596d347fcc0801b1ce3fc5c1e8d82324d",
+    "mumbai": "0x5e41CcC3599785AA5F66dfc3da6cD1f9C8e64D63",
    };
   public accessContractAddresses:any = { 
     "arbGoerli": "0xF29284Ac9F9a0f381E08D8907B8CA90683E421ed",
     "optGoerli": "0x2bE78D8befea0D091b144C60CCcBb224D435A4c2",
     "goerli": "0x37fe0aC287B8c061cf1cb3a886E1BF17b89a658A",
-    "sphinx": "0x5e41ccc3599785aa5f66dfc3da6cd1f9c8e64d63"
+    "sphinx": "0x5e41ccc3599785aa5f66dfc3da6cd1f9c8e64d63",
+    "mumbai": "0x2bE78D8befea0D091b144C60CCcBb224D435A4c2"
   };
   private web3Providers: any = { 
     "arbGoerli": "https://goerli-rollup.arbitrum.io/rpc",
     "optGoerli": "https://goerli.optimism.io",
     "goerli": "https://eth-goerli.public.blastapi.io",
     "sphinx": "https://sphinx.shardeum.org/",
+    "mumbai": "https://rpc-mumbai.maticvigil.com",
    };
   
   public availableNetworks = [
@@ -56,6 +59,13 @@ export class CommunicationService {
       "currency": "SHM",
       "feePerMB": 0.0002,
       "shortIndex": 13
+    },
+    {
+      "name": "Polygon Mumbai",
+      "key": "mumbai",
+      "currency": "MATIC",
+      "feePerMB": 5,
+      "shortIndex": 14
     }
   ];
   public resolveShortIndex(i:any) {
@@ -78,6 +88,9 @@ export class CommunicationService {
     }
     else if (blockchain == "sphinx") {
       return "https://explorer-sphinx.shardeum.org/tx/" + hash;
+    }
+    else if (blockchain == "mumbai") {
+      return "https://mumbai.polygonscan.com/tx/" + hash;
     }
     return "";
   }
@@ -165,6 +178,19 @@ export class CommunicationService {
         },
         blockExplorerUrls: ['https://explorer-sphinx.shardeum.org/'],
         rpcUrls: ['https://sphinx.shardeum.org/'],
+      };
+    }
+    else if (key == "mumbai") {
+      network = {
+        chainId: '0x13881',
+        chainName: 'Mumbai Testnet',
+        nativeCurrency: {
+          symbol: 'MATIC',
+          decimals: 18,
+          name: 'MATIC'
+        },
+        blockExplorerUrls: ['https://polygonscan.com/'],
+        rpcUrls: ['https://rpc-mumbai.maticvigil.com'],
       };
     }
     else {
