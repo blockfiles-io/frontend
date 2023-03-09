@@ -13,3 +13,12 @@ input, select {
 span.small {
     display:block;
 }
+#progress {
+    width:100%;
+    height:20px;
+    border:1px solid gray;
+    div {
+        height:20px;
+        background:black;
+    }
+}

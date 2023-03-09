@@ -15,13 +15,21 @@ export class CommunicationService {
     "goerli": "0xFD6FaF04156D9392EB1D05f092c2D00A9FA5E63F",
     "sphinx": "0x7d57b63596d347fcc0801b1ce3fc5c1e8d82324d",
     "mumbai": "0x5e41CcC3599785AA5F66dfc3da6cD1f9C8e64D63",
+    "polygon": "0x5e41CcC3599785AA5F66dfc3da6cD1f9C8e64D63",
+    "arbitrum": "",
+    "optimism": "",
+    "ethereum": ""
    };
   public accessContractAddresses:any = { 
     "arbGoerli": "0xF29284Ac9F9a0f381E08D8907B8CA90683E421ed",
     "optGoerli": "0x2bE78D8befea0D091b144C60CCcBb224D435A4c2",
     "goerli": "0x37fe0aC287B8c061cf1cb3a886E1BF17b89a658A",
     "sphinx": "0x5e41ccc3599785aa5f66dfc3da6cd1f9c8e64d63",
-    "mumbai": "0x2bE78D8befea0D091b144C60CCcBb224D435A4c2"
+    "mumbai": "0x2bE78D8befea0D091b144C60CCcBb224D435A4c2",
+    "polygon": "0x37fe0aC287B8c061cf1cb3a886E1BF17b89a658A",
+    "arbitrum": "",
+    "optimism": "",
+    "ethereum": ""
   };
   private web3Providers: any = { 
     "arbGoerli": "https://goerli-rollup.arbitrum.io/rpc",
@@ -29,6 +37,10 @@ export class CommunicationService {
     "goerli": "https://eth-goerli.public.blastapi.io",
     "sphinx": "https://sphinx.shardeum.org/",
     "mumbai": "https://rpc-mumbai.maticvigil.com",
+    "polygon": "https://polygon-rpc.com/",
+    "arbitrum": "https://arb1.arbitrum.io/rpc",
+    "optimism": "https://mainnet.optimism.io",
+    "ethereum": "https://mainnet.infura.io/v3/"
    };
   
   public availableNetworks = [
@@ -37,46 +49,57 @@ export class CommunicationService {
       "key": "arbGoerli",
       "currency": "ETH",
       "feePerMB": 0.0002,
+      "freeFileFee": 0.005,
       "chainId": 421613,
-      "enabled": true
+      "enabled": true,
+      "testnet": true
     },
     {
       "name": "Optimism Goerli",
       "key": "optGoerli",
       "currency": "ETH",
       "feePerMB": 0.0002,
+      "freeFileFee": 0.005,
       "chainId": 420,
-      "enabled": true
+      "enabled": true,
+      "testnet": true
     },
     {
       "name": "Ethereum Goerli",
       "key": "goerli",
       "currency": "ETH",
       "feePerMB": 0.0002,
+      "freeFileFee": 0.005,
       "chainId": 5,
-      "enabled": true
+      "enabled": true,
+      "testnet": true
     },
     {
       "name": "Shardeum Sphinx",
       "key": "sphinx",
       "currency": "SHM",
       "feePerMB": 0.0002,
+      "freeFileFee": 0.005,
       "chainId": 8082,
-      "enabled": true
+      "enabled": true,
+      "testnet": true
     },
     {
       "name": "Polygon Mumbai",
       "key": "mumbai",
       "currency": "MATIC",
       "feePerMB": 5,
+      "freeFileFee": 0.005,
       "chainId": 80001,
-      "enabled": true
+      "enabled": true,
+      "testnet": true
     },
     {
       "name": "Ethereum",
       "key": "eth",
       "currency": "ETH",
       "feePerMB": 0.0002,
+      "freeFileFee": 0.005,
       "chainId": 1,
       "enabled": false
     },
@@ -84,15 +107,17 @@ export class CommunicationService {
       "name": "Polygon",
       "key": "matic",
       "currency": "MATIC",
-      "feePerMB": 5,
+      "feePerMB": 0.29,
+      "freeFileFee": 7,
       "chainId": 137,
-      "enabled": false
+      "enabled": true
     },
     {
       "name": "Optimism",
       "key": "optimism",
       "currency": "ETH",
       "feePerMB": 0.0002,
+      "freeFileFee": 0.005,
       "chainId": 10,
       "enabled": false
     },
@@ -101,6 +126,7 @@ export class CommunicationService {
       "key": "arbitrumone",
       "currency": "ETH",
       "feePerMB": 0.0002,
+      "freeFileFee": 0.005,
       "chainId": 42161,
       "enabled": false
     },
@@ -128,6 +154,18 @@ export class CommunicationService {
     }
     else if (blockchain == "mumbai") {
       return "https://mumbai.polygonscan.com/tx/" + hash;
+    }
+    else if (blockchain == "polygon") {
+      return "https://polygonscan.com/tx/" + hash;
+    }
+    else if (blockchain == "arbitrum") {
+      return "https://arbiscan.io/tx/" + hash;
+    }
+    else if (blockchain == "optimism") {
+      return "https://optimistic.etherscan.io/tx/" + hash;
+    }
+    else if (blockchain == "ethereum") {
+      return "https://etherscan.io/tx/" + hash;
     }
     return "";
   }
@@ -226,8 +264,60 @@ export class CommunicationService {
           decimals: 18,
           name: 'MATIC'
         },
-        blockExplorerUrls: ['https://polygonscan.com/'],
+        blockExplorerUrls: ['https://mumbai.polygonscan.com/'],
         rpcUrls: ['https://rpc-mumbai.maticvigil.com'],
+      };
+    }
+    else if (key == "polygon") {
+      network = {
+        chainId: '0x89',
+        chainName: 'Polygon',
+        nativeCurrency: {
+          symbol: 'MATIC',
+          decimals: 18,
+          name: 'MATIC'
+        },
+        blockExplorerUrls: ['https://polygonscan.com/'],
+        rpcUrls: ['https://polygon-rpc.com/'],
+      };
+    }
+    else if (key == "arbitrum") {
+      network = {
+        chainId: '0xA4B1',
+        chainName: 'Arbitrum One',
+        nativeCurrency: {
+          symbol: 'ETH',
+          decimals: 18,
+          name: 'ETH'
+        },
+        blockExplorerUrls: ['https://arbiscan.io'],
+        rpcUrls: ['https://arb1.arbitrum.io/rpc'],
+      };
+    }
+    else if (key == "optimism") {
+      network = {
+        chainId: '0xA',
+        chainName: 'Optimism',
+        nativeCurrency: {
+          symbol: 'ETH',
+          decimals: 18,
+          name: 'ETH'
+        },
+        blockExplorerUrls: ['https://optimistic.etherscan.io/'],
+        rpcUrls: ['https://mainnet.optimism.io'],
+      };
+    }
+    else if (key == "ethereum") {
+      network = {
+        chainId: '0x1',
+        chainName: 'Ethereum',
+        nativeCurrency: {
+          symbol: 'ETH',
+          decimals: 18,
+          name: 'ETH'
+        },
+        blockExplorerUrls: ['https://etherscan.io/'],
+        rpcUrls: ['https://mainnet.infura.io/v3/'],
       };
     }
     else {

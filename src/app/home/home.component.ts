@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpEventType, HttpRequest, HttpResponse } from '@angular/common/http';
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import Web3 from 'web3';
@@ -19,6 +19,7 @@ export class HomeComponent implements OnInit {
   public messages: any[] = [];
   public mintReady = false;
   public advanced = false;
+  public uploadPercentage = 0;
   public entries = [
     {
       "address": "",
@@ -37,7 +38,12 @@ export class HomeComponent implements OnInit {
     private router: Router,
     private cd: ChangeDetectorRef
   ) {
-    this.availableNetworks = this.com.availableNetworks;
+    this.availableNetworks = [];
+    for (let n of this.com.availableNetworks) {
+      if (n.enabled) {
+        this.availableNetworks.push(n);
+      }
+    }
   }
 
   fileUploaded = false;
@@ -81,7 +87,7 @@ export class HomeComponent implements OnInit {
     let p = n.feePerMB * this.fileStats.sizeInMb;
 
     if (this.file.royaltyFee == 0) {
-      p = p + 0.005;
+      p = p + n.freeFileFee;
       this.priceInfo = true;
       this.priceMessage = "Free downloads have a small upcharge.";
     }
@@ -109,19 +115,39 @@ export class HomeComponent implements OnInit {
       
       //    const fileLink = URL.createObjectURL(file);       
       this.http.get<any>('/api/uploads/signedUrl').subscribe(r => {
-        this.http.put<any>(r.url, file).subscribe(d => {
-          this.http.post<any>("/api/uploads/check", {
-            "key": r.key
-          }).subscribe(d => {
-            this.file.key = r.key;
-            this.file.name = file.name;
-            this.fileStats = d;
-            this.fileUploading = false;
-            this.fileUploaded = true;
+
+        const req = new HttpRequest('PUT', r.url, file, {
+          reportProgress: true
+        });
+        this.http.request(req).subscribe(event => {
+          // Via this API, you get access to the raw event stream.
+          // Look for upload progress events.
+          if (event.type === HttpEventType.UploadProgress) {
+            // This is an upload progress event. Compute and show the % done:
+            let t = event.total;
+            if (t == undefined) {
+              t = 1;
+            }
+            this.uploadPercentage = Math.round(100 * event.loaded / t);
+            console.log(`File is ${this.uploadPercentage}% uploaded.`);
             this.cd.detectChanges();
-            this.updatePrice();
-          })
-        })
+          } else if (event instanceof HttpResponse) {
+            console.log('File is completely uploaded!');
+            this.http.post<any>("/api/uploads/check", {
+              "key": r.key
+            }).subscribe(d => {
+              this.file.key = r.key;
+              this.file.name = file.name;
+              this.fileStats = d;
+              this.fileUploading = false;
+              this.fileUploaded = true;
+              this.cd.detectChanges();
+              this.updatePrice();
+            })
+          }
+        });
+
+        
       })
     }
 

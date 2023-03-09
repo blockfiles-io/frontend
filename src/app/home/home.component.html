@@ -10,7 +10,11 @@
         </ng-container>
         <div class="row">
             <div class="col-12 col-sm-4">
-                <ng-container *ngIf="fileUploading">loading ...</ng-container>
+                <ng-container *ngIf="fileUploading">loading ...
+                    <br />
+                    <div id="progress"><div  [style.width.%]="uploadPercentage"></div></div>
+
+                </ng-container>
                 <ng-container *ngIf="fileUploaded && file">{{file.name}}</ng-container>
                 <input *ngIf="fileUploading==false && fileUploaded==false" type="file" (change)="handleUploadChange($event)" accept="*/*" />
             </div>
