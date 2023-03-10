@@ -27,9 +27,13 @@ export class HomeComponent implements OnInit {
     private router: Router,
     private cd: ChangeDetectorRef
   ) {
+    let enableTestnets = this.com.testnetsEnabled();
     this.availableNetworks = [];
     for (let n of this.com.availableNetworks) {
-      if (n.enabled) {
+      if (n.testnet == true && enableTestnets==true) {
+        this.availableNetworks.push(n);
+      }
+      else if (n.testnet == false && n.enabled) {
         this.availableNetworks.push(n);
       }
     }
@@ -43,8 +47,8 @@ export class HomeComponent implements OnInit {
   file = {
     "key": "",
     "loading": false,
-    "network": "arbGoerli",
-    "feeCurrency": "ETH",
+    "network": "polygon",
+    "feeCurrency": "MATIC",
     "royaltyFee": 0,
     "maxHolders": 0,
     "transactionTx": "",

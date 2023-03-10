@@ -152,6 +152,16 @@ export class CommunicationService {
       "testnet": false
     },
   ];
+  public enableTestnets() {
+    localStorage.setItem("testnets","true");
+    window.location.reload();
+  }
+  public testnetsEnabled() {
+    if (localStorage.getItem("testnets")=="true") {
+      return true;
+    }
+    return false;
+  }
   public resolveChainId(i:any) {
     for (let d of this.availableNetworks) {
       if (d.chainId == i) {

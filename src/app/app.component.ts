@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { filter } from 'rxjs';
+import { CommunicationService } from './communication.service';
 declare const gtag: Function;
 declare const logBadgeClick: Function;
 declare const window: any;
@@ -12,8 +13,12 @@ declare const window: any;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent implements OnInit {
-  constructor(private router: Router) {
-    
+  public testnets = false;
+  constructor(private router: Router, private com: CommunicationService) {
+    this.testnets = this.com.testnetsEnabled();
+  }
+  enableTestnets() {
+    this.com.enableTestnets();
   }
   ngOnInit(): void {
     this.router.events.pipe(
